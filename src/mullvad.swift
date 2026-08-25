@@ -20,6 +20,14 @@ extension URLSession {
     }
 }
 
+public enum HTTPMethod: String {
+    case get = "GET"
+    case post = "POST"
+    case put = "PUT"
+    case delete = "DELETE"
+    case patch = "PATCH"
+}
+
 public class Mullvad{
     private let api = "https://ipv4.am.i.mullvad.net"
     private let api2 = "https://api.mullvad.net"
