@@ -7,8 +7,8 @@ import mullvad
 let client = Mullvad()
 
 do {
-    let ip_info = try await client.get_my_ip()
-    print(ip_info)
+    let ipInfo = try await client.getMyIp()
+    print(ipInfo)
 } catch {
     print("Error: \(error)")
 }
