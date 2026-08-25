@@ -55,11 +55,11 @@ public class Mullvad{
         return try JSONSerialization.jsonObject(with: data)
     }
 
-    public func get_wireguard_proxy_list() async throws -> Any {
+    public func getWireguardProxyList() async throws -> Any {
         return try await fetchJSON(from: "\(api2)/www/relays/wireguard/")
     }
 
-    public func get_my_ip() async throws -> Any {
+    public func getMyIp() async throws -> Any {
         return try await fetchJSON(from: "\(api)/json")
     }
 }
