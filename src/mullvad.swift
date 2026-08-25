@@ -22,7 +22,7 @@ extension URLSession {
 
 public class Mullvad{
     private let api = "https://ipv4.am.i.mullvad.net"
-    private let api_2 = "https://api.mullvad.net"
+    private let api2 = "https://api.mullvad.net"
     private var headers: [String: String]
     
     public init() {
@@ -35,28 +35,31 @@ public class Mullvad{
         ]
 
     }
-
-    public func get_wireguard_proxy_list() async throws -> Any {
-        let urlString = "\(api_2)/www/relays/wireguard/"
-        guard let url = URL(string: urlString) else {
+    
+    private func fetchJSON(from urlString: String,method: HTTPMethod = .get,body: Data? = nil,queryParameters: [String: String]? = nil) async throws -> Any {
+        var urlComponents = URLComponents(string: urlString)
+        if let queryParameters = queryParameters {
+            urlComponents?.queryItems = queryParameters.map { URLQueryItem(name: $0.key, value: $0.value) }
+        }
+        guard let url = urlComponents?.url else {
             throw NSError(domain: "Invalid URL", code: -1)
         }
         var request = URLRequest(url: url)
-        request.httpMethod = "GET"
+        request.httpMethod = method.rawValue
         request.allHTTPHeaderFields = headers
+        if let body = body {
+            request.httpBody = body
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        }
         let (data, _) = try await URLSession.shared.data(for: request)
         return try JSONSerialization.jsonObject(with: data)
     }
 
+    public func get_wireguard_proxy_list() async throws -> Any {
+        return try await fetchJSON(from: "\(api2)/www/relays/wireguard/")
+    }
+
     public func get_my_ip() async throws -> Any {
-        let urlString = "\(api)/json"
-        guard let url = URL(string: urlString) else {
-            throw NSError(domain: "Invalid URL", code: -1)
-        }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.allHTTPHeaderFields = headers
-        let (data, _) = try await URLSession.shared.data(for: request)
-        return try JSONSerialization.jsonObject(with: data)
+        return try await fetchJSON(from: "\(api)/json")
     }
 }
